@@ -1,0 +1,189 @@
+@import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-bg: #0f172a;
+  --color-card: #1e293b;
+  --color-accent: #f59e0b;
+  --color-success: #10b981;
+  --color-error: #ef4444;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: 'Noto Sans KR', 'Pretendard', system-ui, sans-serif;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+  color: #f1f5f9;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(30, 41, 59, 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5);
+}
+
+/* Game Card Styles */
+@layer components {
+  .game-card {
+    @apply bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-6 shadow-xl border border-slate-700/50;
+    transition: all 0.3s ease;
+  }
+
+  .game-card:hover {
+    @apply border-amber-500/50 shadow-amber-500/10;
+    transform: translateY(-4px);
+  }
+
+  .btn-primary {
+    @apply px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold rounded-xl;
+    @apply hover:from-amber-400 hover:to-orange-400 active:scale-95 transition-all duration-200;
+    @apply shadow-lg shadow-amber-500/20;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 bg-slate-700 text-slate-200 font-semibold rounded-xl;
+    @apply hover:bg-slate-600 active:scale-95 transition-all duration-200;
+    @apply border border-slate-600;
+  }
+
+  .btn-option {
+    @apply px-4 py-3 bg-slate-700/80 text-white font-medium rounded-xl;
+    @apply hover:bg-slate-600 active:scale-95 transition-all duration-200;
+    @apply border-2 border-slate-600 hover:border-amber-500/50;
+    @apply min-h-[48px] touch-manipulation;
+  }
+
+  .btn-option.selected {
+    @apply bg-amber-500/20 border-amber-500 text-amber-400;
+  }
+
+  .btn-option.correct {
+    @apply bg-emerald-500/20 border-emerald-500 text-emerald-400;
+  }
+
+  .btn-option.incorrect {
+    @apply bg-red-500/20 border-red-500 text-red-400;
+  }
+
+  .progress-bar {
+    @apply h-3 bg-slate-700 rounded-full overflow-hidden;
+  }
+
+  .progress-bar-fill {
+    @apply h-full bg-gradient-to-r from-amber-500 to-orange-500 transition-all duration-200;
+  }
+
+  .combo-badge {
+    @apply inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600;
+    @apply rounded-full text-white font-bold shadow-lg shadow-purple-500/30;
+  }
+
+  .score-display {
+    @apply text-3xl font-bold bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent;
+  }
+
+  .flip-card {
+    perspective: 1000px;
+  }
+
+  .flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+  }
+
+  .flip-card-inner.flipped {
+    transform: rotateY(180deg);
+  }
+
+  .flip-card-front,
+  .flip-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 1rem;
+  }
+
+  .flip-card-back {
+    transform: rotateY(180deg);
+  }
+}
+
+/* Touch optimization for mobile */
+@media (hover: none) and (pointer: coarse) {
+  .btn-option,
+  .btn-primary,
+  .btn-secondary {
+    min-height: 48px;
+    min-width: 48px;
+  }
+}
+
+/* 3D perspective for cards */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+/* Slot machine effect */
+.slot-reel {
+  overflow: hidden;
+  height: 80px;
+}
+
+.slot-item {
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: bold;
+}
