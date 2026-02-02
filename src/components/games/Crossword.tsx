@@ -28,6 +28,7 @@ export function Crossword({ onBack }: CrosswordProps) {
   const [completedWords, setCompletedWords] = useState<Set<string>>(new Set());
   const [result, setResult] = useState<GameResult | null>(null);
   const [inputValue, setInputValue] = useState('');
+  const [isComposing, setIsComposing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const puzzle: CrosswordPuzzle = crosswordPuzzles[puzzleIndex];
@@ -115,19 +116,30 @@ export function Crossword({ onBack }: CrosswordProps) {
 
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     if (status !== 'playing' || !selectedCell) return;
+    setInputValue(e.target.value);
+  }, [status, selectedCell]);
 
-    const value = e.target.value;
-    // 마지막 입력된 한글 문자만 사용
-    const lastChar = value.slice(-1);
+  // 한글 조합 시작
+  const handleCompositionStart = useCallback(() => {
+    setIsComposing(true);
+  }, []);
+
+  // 한글 조합 완료 - 여기서 셀에 입력하고 다음으로 이동
+  const handleCompositionEnd = useCallback((e: React.CompositionEvent<HTMLInputElement>) => {
+    setIsComposing(false);
+    
+    if (status !== 'playing' || !selectedCell) return;
+
+    const value = e.data; // 조합이 완료된 문자
     
     // 한글 완성형 문자인지 확인 (가-힣)
-    if (lastChar && /[가-힣]/.test(lastChar)) {
+    if (value && /[가-힣]/.test(value)) {
       const { row, col } = selectedCell;
       if (puzzle.grid[row][col].black) return;
 
       // Update grid
       const newGrid = userGrid.map(r => [...r]);
-      newGrid[row][col] = lastChar;
+      newGrid[row][col] = value;
       setUserGrid(newGrid);
       
       haptic.light();
@@ -141,10 +153,8 @@ export function Crossword({ onBack }: CrosswordProps) {
       
       // Clear input
       setInputValue('');
-    } else {
-      setInputValue(value);
     }
-  }, [status, selectedCell, puzzle, userGrid, direction]);
+  }, [status, selectedCell, puzzle, userGrid]);
 
   const checkWordCompletion = (grid: (string | null)[][], _row: number, _col: number) => {
     // Check across words
@@ -491,6 +501,8 @@ export function Crossword({ onBack }: CrosswordProps) {
                 value={inputValue}
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
+                onCompositionStart={handleCompositionStart}
+                onCompositionEnd={handleCompositionEnd}
                 placeholder={selectedCell ? "한글 입력..." : "칸을 먼저 선택하세요"}
                 disabled={!selectedCell}
                 className="flex-1 bg-slate-700 text-white text-xl text-center py-3 px-4 rounded-lg
