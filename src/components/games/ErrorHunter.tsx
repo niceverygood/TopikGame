@@ -16,7 +16,7 @@ interface ErrorHunterProps {
 export function ErrorHunter({ onBack }: ErrorHunterProps) {
   const gameInfo = GAMES.find(g => g.id === 'error-hunter')!;
   const {
-    score, combo, status, hearts, timeLeft,
+    score, combo, status, timeLeft,
     setStatus, addScore, incrementCombo, resetCombo,
     loseHeart, resetGame, incrementCorrect, incrementTotal,
     correctAnswers, totalQuestions, maxCombo
@@ -208,7 +208,7 @@ export function ErrorHunter({ onBack }: ErrorHunterProps) {
             {words.map((word, index) => {
               const isError = cleanWord(word) === cleanWord(currentQuestion.errorWord);
               const isSelected = selectedWord === word;
-              const showAsCorrect = isCorrect && isSelected;
+              // const showAsCorrect = isCorrect && isSelected; // Not used currently
               const showAsError = isSelected && !isError;
 
               return (

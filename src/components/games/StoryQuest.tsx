@@ -42,7 +42,7 @@ const backgroundIcons: Record<string, string> = {
 export function StoryQuest({ onBack }: StoryQuestProps) {
   const gameInfo = GAMES.find(g => g.id === 'story-quest')!;
   const {
-    score, combo, status, hearts, timeLeft,
+    score, combo, status, timeLeft,
     setStatus, addScore, incrementCombo, resetCombo,
     loseHeart, resetGame, incrementCorrect, incrementTotal,
     correctAnswers, totalQuestions, maxCombo

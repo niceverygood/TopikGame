@@ -206,7 +206,7 @@ export function FindLetter({ onBack }: FindLetterProps) {
               row.map((cell, colIndex) => {
                 const posKey = `${rowIndex}-${colIndex}`;
                 const isFound = foundPositions.has(posKey);
-                const isTarget = isTargetPosition(rowIndex, colIndex);
+                // isTargetPosition is called for check but value not directly used
                 const isStamped = showStamp?.row === rowIndex && showStamp?.col === colIndex;
                 const isWrong = showWrong?.row === rowIndex && showWrong?.col === colIndex;
 

@@ -26,7 +26,7 @@ export function OddOneOut({ onBack }: OddOneOutProps) {
   const [questions, setQuestions] = useState<OddOneOutQuestion[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [_isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [showRule, setShowRule] = useState(false);
   const [result, setResult] = useState<GameResult | null>(null);
   const [answerTime, setAnswerTime] = useState(0);

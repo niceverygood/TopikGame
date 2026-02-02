@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence, Reorder } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '../../stores/gameStore';
 import { GameHeader, ResultModal, Button } from '../common';
 import { wordRailWords } from '../../data';
@@ -17,7 +17,7 @@ export function WordRail({ onBack }: WordRailProps) {
   const gameInfo = GAMES.find(g => g.id === 'word-rail')!;
   const {
     score, combo, status, timeLeft,
-    setStatus, addScore, incrementCombo, resetCombo,
+    setStatus, addScore, incrementCombo,
     resetGame, incrementCorrect, incrementTotal,
     correctAnswers, totalQuestions, maxCombo
   } = useGameStore();

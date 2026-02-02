@@ -16,7 +16,7 @@ interface SyllableSlotProps {
 export function SyllableSlot({ onBack }: SyllableSlotProps) {
   const gameInfo = GAMES.find(g => g.id === 'syllable-slot')!;
   const {
-    score, combo, status, hearts, timeLeft,
+    score, combo, status, timeLeft,
     setStatus, addScore, incrementCombo, resetCombo,
     loseHeart, resetGame, incrementCorrect, incrementTotal,
     correctAnswers, totalQuestions, maxCombo

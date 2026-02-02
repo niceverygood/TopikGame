@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '../../stores/gameStore';
-import { GameHeader, ResultModal, Button, HeartDisplay } from '../common';
+import { GameHeader, ResultModal, Button } from '../common';
 import { chosungQuestions } from '../../data';
 import { shuffleArray } from '../../data/antonymData';
 import { GAMES } from '../../data/gameData';
@@ -16,7 +16,7 @@ interface ChosungDetectiveProps {
 export function ChosungDetective({ onBack }: ChosungDetectiveProps) {
   const gameInfo = GAMES.find(g => g.id === 'chosung-detective')!;
   const {
-    score, combo, status, hearts, timeLeft,
+    score, combo, status, timeLeft,
     setStatus, addScore, incrementCombo, resetCombo,
     loseHeart, resetGame, incrementCorrect, incrementTotal,
     correctAnswers, totalQuestions, maxCombo

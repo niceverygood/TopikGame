@@ -4,10 +4,10 @@ export const crosswordPuzzles: CrosswordPuzzle[] = [
   {
     size: 5,
     grid: [
-      [{ letter: "학" }, { letter: "교" }, { black: true }, { letter: "선" }, { letter: "생" }],
-      [{ letter: "생" }, { black: true }, { black: true }, { letter: "물" }, { black: true }],
-      [{ black: true }, { letter: "가" }, { letter: "족" }, { black: true }, { black: true }],
-      [{ letter: "친" }, { letter: "구" }, { black: true }, { letter: "책" }, { letter: "상" }],
+      [{ letter: "학", number: 1 }, { letter: "교" }, { black: true }, { letter: "선", number: 2 }, { letter: "생" }],
+      [{ letter: "생" }, { black: true }, { black: true }, { letter: "물", number: 6 }, { black: true }],
+      [{ black: true }, { letter: "가", number: 3 }, { letter: "족" }, { black: true }, { black: true }],
+      [{ letter: "친", number: 4 }, { letter: "구", number: 7 }, { black: true }, { letter: "책", number: 5 }, { letter: "상" }],
       [{ black: true }, { black: true }, { black: true }, { black: true }, { black: true }],
     ],
     clues: {
@@ -20,18 +20,18 @@ export const crosswordPuzzles: CrosswordPuzzle[] = [
       ],
       down: [
         { number: 1, clue: "학교에서 배우는 사람", answer: "학생", row: 0, col: 0 },
-        { number: 6, clue: "마실 수 있는 것", answer: "물", row: 0, col: 3 },
-        { number: 7, clue: "나의 아버지와 어머니", answer: "가구", row: 2, col: 1 },
+        { number: 6, clue: "마실 수 있는 것", answer: "물", row: 1, col: 3 },
+        { number: 7, clue: "나의 아버지와 어머니", answer: "가구", row: 3, col: 1 },
       ]
     }
   },
   {
     size: 5,
     grid: [
-      [{ letter: "사" }, { letter: "과" }, { black: true }, { letter: "비" }, { letter: "행" }],
-      [{ letter: "랑" }, { black: true }, { black: true }, { letter: "빔" }, { black: true }],
-      [{ black: true }, { letter: "오" }, { letter: "렌" }, { letter: "지" }, { black: true }],
-      [{ letter: "포" }, { letter: "도" }, { black: true }, { black: true }, { letter: "집" }],
+      [{ letter: "사", number: 1 }, { letter: "과" }, { black: true }, { letter: "비", number: 2 }, { letter: "행" }],
+      [{ letter: "랑" }, { black: true }, { black: true }, { letter: "빔", number: 5 }, { black: true }],
+      [{ black: true }, { letter: "오", number: 3 }, { letter: "렌" }, { letter: "지" }, { black: true }],
+      [{ letter: "포", number: 4 }, { letter: "도" }, { black: true }, { black: true }, { letter: "집", number: 6 }],
       [{ black: true }, { black: true }, { black: true }, { black: true }, { black: true }],
     ],
     clues: {

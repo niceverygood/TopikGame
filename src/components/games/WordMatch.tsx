@@ -21,7 +21,7 @@ interface CardState {
 export function WordMatch({ onBack }: WordMatchProps) {
   const gameInfo = GAMES.find(g => g.id === 'word-match')!;
   const {
-    score, combo, status, hearts, timeLeft,
+    score, combo, status, timeLeft,
     setStatus, addScore, incrementCombo, resetCombo,
     loseHeart, resetGame, incrementCorrect, incrementTotal,
     correctAnswers, totalQuestions, maxCombo
@@ -266,7 +266,7 @@ export function WordMatch({ onBack }: WordMatchProps) {
         <div className={`grid ${gridCols} gap-2`}>
           {cards.map((cardState, index) => {
             const { card, isFlipped, isMatched } = cardState;
-            const isSelected = selectedCards.includes(index);
+            // const isSelected = selectedCards.includes(index); // Not used in render
 
             return (
               <motion.button

@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { motion } from 'framer-motion';
 import { useGameStore } from '../../stores/gameStore';
 import { GameHeader, ResultModal, Button } from '../common';
 import { crosswordPuzzles, createEmptyGrid, isPuzzleComplete } from '../../data';
@@ -15,18 +15,20 @@ interface CrosswordProps {
 export function Crossword({ onBack }: CrosswordProps) {
   const gameInfo = GAMES.find(g => g.id === 'crossword')!;
   const {
-    score, combo, status, timeLeft,
-    setStatus, addScore, incrementCombo, resetCombo,
-    subtractTime, resetGame, incrementCorrect, incrementTotal,
-    correctAnswers, totalQuestions, maxCombo
+    score, status, timeLeft,
+    setStatus, addScore, incrementCombo,
+    resetGame, incrementCorrect,
+    correctAnswers, maxCombo
   } = useGameStore();
 
-  const [puzzleIndex, setPuzzleIndex] = useState(0);
+  const [puzzleIndex] = useState(0);
   const [userGrid, setUserGrid] = useState<(string | null)[][]>([]);
   const [selectedCell, setSelectedCell] = useState<{ row: number; col: number } | null>(null);
   const [direction, setDirection] = useState<'across' | 'down'>('across');
   const [completedWords, setCompletedWords] = useState<Set<string>>(new Set());
   const [result, setResult] = useState<GameResult | null>(null);
+  const [inputValue, setInputValue] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const puzzle: CrosswordPuzzle = crosswordPuzzles[puzzleIndex];
 
@@ -105,30 +107,46 @@ export function Crossword({ onBack }: CrosswordProps) {
     } else {
       setSelectedCell({ row, col });
     }
+    
+    // Focus input for keyboard
+    setInputValue('');
+    setTimeout(() => inputRef.current?.focus(), 50);
   };
 
-  const handleKeyInput = useCallback((char: string) => {
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     if (status !== 'playing' || !selectedCell) return;
 
-    const { row, col } = selectedCell;
-    if (puzzle.grid[row][col].black) return;
-
-    // Update grid
-    const newGrid = userGrid.map(r => [...r]);
-    newGrid[row][col] = char.toUpperCase();
-    setUserGrid(newGrid);
+    const value = e.target.value;
+    // 마지막 입력된 한글 문자만 사용
+    const lastChar = value.slice(-1);
     
-    haptic.light();
-    addScore(10);
+    // 한글 완성형 문자인지 확인 (가-힣)
+    if (lastChar && /[가-힣]/.test(lastChar)) {
+      const { row, col } = selectedCell;
+      if (puzzle.grid[row][col].black) return;
 
-    // Check if any word is completed
-    checkWordCompletion(newGrid, row, col);
+      // Update grid
+      const newGrid = userGrid.map(r => [...r]);
+      newGrid[row][col] = lastChar;
+      setUserGrid(newGrid);
+      
+      haptic.light();
+      addScore(10);
 
-    // Move to next cell
-    moveToNextCell(row, col);
+      // Check if any word is completed
+      checkWordCompletion(newGrid, row, col);
+
+      // Move to next cell
+      moveToNextCell(row, col);
+      
+      // Clear input
+      setInputValue('');
+    } else {
+      setInputValue(value);
+    }
   }, [status, selectedCell, puzzle, userGrid, direction]);
 
-  const checkWordCompletion = (grid: (string | null)[][], row: number, col: number) => {
+  const checkWordCompletion = (grid: (string | null)[][], _row: number, _col: number) => {
     // Check across words
     for (const clue of puzzle.clues.across) {
       const wordKey = `across-${clue.number}`;
@@ -141,7 +159,7 @@ export function Crossword({ onBack }: CrosswordProps) {
         word += cell;
       }
 
-      if (word === clue.answer.toUpperCase()) {
+      if (word === clue.answer) {
         haptic.success();
         sound.correct();
         incrementCorrect();
@@ -163,7 +181,7 @@ export function Crossword({ onBack }: CrosswordProps) {
         word += cell;
       }
 
-      if (word === clue.answer.toUpperCase()) {
+      if (word === clue.answer) {
         haptic.success();
         sound.correct();
         incrementCorrect();
@@ -201,23 +219,24 @@ export function Crossword({ onBack }: CrosswordProps) {
     }
   };
 
-  const handleBackspace = () => {
+  const handleBackspace = useCallback(() => {
     if (!selectedCell) return;
     const { row, col } = selectedCell;
     
     const newGrid = userGrid.map(r => [...r]);
     newGrid[row][col] = '';
     setUserGrid(newGrid);
+    setInputValue('');
     
     haptic.light();
-  };
+  }, [selectedCell, userGrid]);
 
-  // Keyboard layout
-  const koreanKeys = [
-    ['ㅂ', 'ㅈ', 'ㄷ', 'ㄱ', 'ㅅ', 'ㅛ', 'ㅕ', 'ㅑ', 'ㅐ', 'ㅔ'],
-    ['ㅁ', 'ㄴ', 'ㅇ', 'ㄹ', 'ㅎ', 'ㅗ', 'ㅓ', 'ㅏ', 'ㅣ'],
-    ['ㅋ', 'ㅌ', 'ㅊ', 'ㅍ', 'ㅠ', 'ㅜ', 'ㅡ'],
-  ];
+  // 키보드 이벤트 처리
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace' && inputValue === '') {
+      handleBackspace();
+    }
+  }, [inputValue, handleBackspace]);
 
   const handleTimeUp = useCallback(() => {
     setStatus('finished');
@@ -459,29 +478,40 @@ export function Crossword({ onBack }: CrosswordProps) {
           </div>
         </div>
 
-        {/* Virtual Keyboard */}
-        <div className="w-full max-w-md space-y-1">
-          {koreanKeys.map((row, rowIndex) => (
-            <div key={rowIndex} className="flex justify-center gap-1">
-              {row.map((key) => (
-                <button
-                  key={key}
-                  onClick={() => handleKeyInput(key)}
-                  className="w-8 h-10 sm:w-10 sm:h-12 bg-slate-700 rounded text-white font-medium
-                    hover:bg-slate-600 active:bg-slate-500 transition-colors"
-                >
-                  {key}
-                </button>
-              ))}
+        {/* 한글 입력 필드 */}
+        <div className="w-full max-w-md">
+          <div className="bg-slate-800/50 rounded-xl p-4">
+            <p className="text-slate-400 text-sm mb-3 text-center">
+              📝 칸을 선택하고 한글을 입력하세요
+            </p>
+            <div className="flex gap-2">
+              <input
+                ref={inputRef}
+                type="text"
+                value={inputValue}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                placeholder={selectedCell ? "한글 입력..." : "칸을 먼저 선택하세요"}
+                disabled={!selectedCell}
+                className="flex-1 bg-slate-700 text-white text-xl text-center py-3 px-4 rounded-lg
+                  border-2 border-slate-600 focus:border-amber-500 focus:outline-none
+                  placeholder:text-slate-500 disabled:opacity-50"
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="off"
+              />
+              <button
+                onClick={handleBackspace}
+                disabled={!selectedCell}
+                className="px-4 py-3 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 
+                  transition-colors disabled:opacity-50 font-medium"
+              >
+                ⌫ 지우기
+              </button>
             </div>
-          ))}
-          <div className="flex justify-center gap-2 mt-2">
-            <button
-              onClick={handleBackspace}
-              className="px-6 py-2 bg-slate-600 rounded text-white hover:bg-slate-500"
-            >
-              ⌫ 지우기
-            </button>
+            <p className="text-slate-500 text-xs mt-2 text-center">
+              💡 같은 칸을 다시 탭하면 가로↔세로 전환
+            </p>
           </div>
         </div>
       </main>
